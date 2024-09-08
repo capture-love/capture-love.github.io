@@ -113,13 +113,20 @@ main {
     }
   }
 
+  .content-wrapper {
+    position: relative;
+    max-width: 360px;
+    width: 100%;
+  }
+
   .form-wrapper {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 20px;
     justify-content: center;
-    max-width: 360px;
     width: 100%;
+    z-index: 2;
 
     .text-input {
       background-image: linear-gradient(rgba($light, 0.4), rgba($light, 0.4)),
@@ -134,14 +141,15 @@ main {
       }
     }
 
-    .file-input {
+    .file-input,
+    .file-wrapper {
       align-items: center;
       background-image: linear-gradient(rgba($light, 0.4), rgba($light, 0.4)),
         linear-gradient(rgba($white, 0.6), rgba($white, 0.6));
       border-radius: 4px;
-      border: 1px dashed $primary;
+      border: 1px $primary;
       display: flex;
-      height: 160px;
+      height: 120px;
       justify-content: center;
       padding: 14px;
       width: 100%;
@@ -163,6 +171,55 @@ main {
       }
     }
 
+    .file-input {
+      border-style: dashed;
+    }
+
+    .file-wrapper {
+      border-style: solid;
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+      position: relative;
+
+      .clear {
+        background-color: rgba($dark, 0.2);
+        border-radius: 100%;
+        cursor: pointer;
+        height: 24px;
+        padding: 2px;
+        position: absolute;
+        right: 10px;
+        stroke: $dark;
+        top: 10px;
+        transition: 0.3s;
+        user-select: none;
+        width: 24px;
+
+        &:hover {
+          background-color: rgba($danger, 1);
+          stroke: $white;
+        }
+      }
+
+      .ready-message {
+        align-items: center;
+        display: flex;
+        gap: 4px;
+        justify-content: center;
+        text-align: center;
+
+        b {
+          font-weight: 600;
+        }
+
+        .icon {
+          height: 24px;
+          width: 24px;
+        }
+      }
+    }
+
     .submit {
       @include displayFont();
       align-items: center;
@@ -174,6 +231,7 @@ main {
       display: flex;
       font-size: 20px;
       justify-content: center;
+      margin-top: 20px;
       padding: 10px 14px 5px 14px;
       text-align: center;
       width: 100%;
@@ -181,6 +239,37 @@ main {
       &:disabled {
         cursor: not-allowed;
       }
+    }
+  }
+
+  .thank-you-card {
+    background-color: transparent; /* For browsers that do not support gradients */
+    background-image: radial-gradient(rgba($white, 1) 0%, rgba($white, 0.75) 50%, rgba($white, 0) 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+
+    h2 {
+      @include displayFont();
+      color: $dark;
+      font-size: 24px;
+      margin-bottom: -5px;
+    }
+  }
+
+  .form-wrapper,
+  .thank-you-card {
+    transition: opacity 0.3s;
+
+    &.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
   }
 }
