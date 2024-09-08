@@ -36,40 +36,43 @@ function App() {
   }
 
   return (
-    <main>
-      <h1 className="header">{import.meta.env.VITE_HEADER}</h1>
-      <div className="form-wrapper">
-        <input
-          ref={fileInput}
-          onChange={handleImportMedia}
-          type="file"
-          accept="image/*,video/*"
-          multiple
-          hidden
-        />
-        <input
-          className="text-input"
-          placeholder="Ime / Nadimak"
-          value={form.name}
-          onChange={(e) => handleFormChange('name', e.target.value)}
-        />
-        <textarea
-          className="text-input"
-          placeholder="Poruka za mladence..."
-          value={form.message}
-          onChange={(e) => handleFormChange('message', e.target.value)}
-          rows={4}
-        />
-        <div className="file-input" onClick={handleChooseMedia}>
-          <div className="placeholder">
-            <AddMediaIcon className="icon" />
-            <span>Odaberite slike i videe<br />koje želite podijeliti</span>
+    <>
+      <div className="background" />
+      <main>
+        <h1 className="header">{import.meta.env.VITE_HEADER}</h1>
+        <div className="form-wrapper">
+          <input
+            ref={fileInput}
+            onChange={handleImportMedia}
+            type="file"
+            accept="image/*,video/*"
+            multiple
+            hidden
+          />
+          <input
+            className="text-input"
+            placeholder="Ime / Nadimak"
+            value={form.name}
+            onChange={(e) => handleFormChange('name', e.target.value)}
+          />
+          <textarea
+            className="text-input"
+            placeholder="Poruka za mladence..."
+            value={form.message}
+            onChange={(e) => handleFormChange('message', e.target.value)}
+            rows={4}
+          />
+          <div className="file-input" onClick={handleChooseMedia}>
+            <div className="placeholder">
+              <AddMediaIcon className="icon" />
+              <span>Odaberite slike i videe<br />koje želite podijeliti</span>
+            </div>
           </div>
-        </div>
 
-        <button className="submit" disabled={!(first(form.media) instanceof File)}>Pošalji</button>
-      </div>
-    </main>
+          <button className="submit" disabled={!(first(form.media) instanceof File)}>Pošalji</button>
+        </div>
+      </main>
+    </>
   )
 }
 
