@@ -4,7 +4,7 @@
 
 @mixin displayFont {
   font-family: "Great Vibes", cursive;
-  font-weight: 400;
+  font-optical-sizing: auto;
   font-style: normal;
 }
 
@@ -12,4 +12,161 @@
   font-family: "Inter", Helvetica, Arial, sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
+}
+
+/* Code for Firefox */
+::-moz-selection {
+  color: $white;
+  background: $primary;
+}
+
+::selection {
+  color: $white;
+  background: $primary;
+}
+
+body {
+  @include primaryFont();
+  background-color: $white;
+  color: $dark;
+  display: flex;
+  font-size: 14px;
+  height: 100%;
+  justify-content: center;
+  min-height: 100vh;
+  min-width: 100vw;
+  position: relative;
+  width: 100%;
+
+  &::before,
+  &::after {
+    background-image: url("/images/pattern.png");
+    height: 100%;
+    width: 100%;
+    max-width: 420px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    content: "";
+    position: absolute;
+    z-index: 1;
+  }
+
+  &::before {
+    right: 0;
+    top: 0;
+  }
+
+  &::after {
+    bottom: 0;
+    left: 0;
+    rotate: 180deg;
+  }
+}
+
+#root {
+  display: flex;
+  height: 100%;
+  min-height: 100vh;
+  min-width: 100vw;
+  width: 100%;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0 auto;
+  max-width: 420px;
+  padding: 20px;
+  position: relative;
+  width: 100%;
+  z-index: 2;
+
+  .header {
+    @include displayFont();
+    background-color: transparent; /* For browsers that do not support gradients */
+    background-image: radial-gradient(rgba($white, 1) 0%, rgba($white, 0.75) 50%, rgba($white, 0) 100%);
+    border-radius: 100%;
+    box-shadow: 0 0 20px $white;
+    color: $primary;
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 30px;
+    margin: 60px 0;
+    padding: 20px;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba($black, 0.1);
+    white-space: pre-wrap;
+  }
+
+  .form-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    max-width: 360px;
+    width: 100%;
+
+    .text-input {
+      background-image: linear-gradient(rgba($light, 0.4), rgba($light, 0.4)),
+        linear-gradient(rgba($white, 0.6), rgba($white, 0.6));
+      border-bottom: 1px solid $primary;
+      border-radius: 4px 4px 0 0;
+      padding: 14px;
+      width: 100%;
+
+      &::placeholder {
+        opacity: 0.6;
+      }
+    }
+
+    .file-input {
+      align-items: center;
+      background-image: linear-gradient(rgba($light, 0.4), rgba($light, 0.4)),
+        linear-gradient(rgba($white, 0.6), rgba($white, 0.6));
+      border-radius: 4px;
+      border: 1px dashed $primary;
+      display: flex;
+      height: 160px;
+      justify-content: center;
+      padding: 14px;
+      width: 100%;
+
+      .placeholder {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        justify-content: center;
+        opacity: 0.6;
+        text-align: center;
+        white-space: pre-wrap;
+
+        .icon {
+          height: 24px;
+          width: 24px;
+        }
+      }
+    }
+
+    .submit {
+      @include displayFont();
+      align-items: center;
+      background-color: $primary;
+      border-radius: 100vw;
+      border: 1px solid rgba($black, 0.1);
+      color: $white;
+      cursor: pointer;
+      display: flex;
+      font-size: 20px;
+      justify-content: center;
+      padding: 10px 14px 5px 14px;
+      text-align: center;
+      width: 100%;
+
+      &:disabled {
+        cursor: not-allowed;
+      }
+    }
+  }
 }

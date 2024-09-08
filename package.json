@@ -6,18 +6,21 @@
   "scripts": {
     "dev": "vite --port 3000",
     "build": "tsc -b && vite build",
-    "post-build": "rimraf dist/**/*.map",
     "preview": "vite preview",
     "deploy": "bash scripts/deploy.sh",
     "lint": "eslint ."
   },
   "dependencies": {
+    "lodash": "^4.17.21",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "sass": "^1.78.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@svgr/rollup": "^8.1.0",
+    "@types/lodash": "^4.17.7",
+    "@types/node": "^22.5.4",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^8.4.0",
@@ -38,6 +41,6 @@
     "vite": "^5.4.1"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20.9.0"
   }
 }

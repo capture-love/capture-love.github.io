@@ -1,50 +1,81 @@
-# React + TypeScript + Vite
+# <img src="./public/favicon.svg" alt="favicon" height="40" width="40" /> Capture Love
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Wedding photos & videos upload app
 
-Currently, two official plugins are available:
+<img src=".github/docs/feature_graphic.png" alt="feature_graphic" height="800">
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## Deployment
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### Setup GitHub pages
+ATM there is some known problems when deploying to GitHub pages using tags
+The current workaround for this can be found [here](https://github.com/actions/deploy-pages/issues/151#issuecomment-1491271099)
 
-- Configure the top-level `parserOptions` property like this:
+#### The quick guide
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+1. Go to project `Settings` > `Pages` > `Build and deployment`
+    1. Set "**Source**" to "**GitHub Actions**"
+1. Go to project `Settings` > `Environments`
+    1. If not already there, create an environment called `github-pages`
+    2. Set "**Deployment branches**" to "**All branches**"
+
+### Deploy the app
+
+Triggering the deploy job can be achieved in three ways:
+
+#### 1. Via GitHub Project Page
+Looking at the project main page on GitHub, on the right-hand side column, there is a section **"Releases"**.
+
+Click on the button **"Create a new release"**.
+
+Follow instructions, it is required to enter a tag such as **"v1.0.0"**
+
+#### 2. Via Bash Script - Remotely
+Using the script that lives in `scripts/deploy.sh`, you can call:
+
+    yarn deploy --{TYPE}
+
+Where `{TYPE}` can be `major`, `minor` or `patch`
+
+#### 3. Via Console using GIT - Remotely
+Go to the root of the project that was previously pulled from git.
+In the console (always increment in the next release):
+
+```sh
+git tag v1.0.0
+git push origin --tags
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+---
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+## Development
+### Requirements
+#### Node.js & yarn
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+Node version `>=20.9.0` and up needed to run the React scripts. And yarn to run the scripts and handle dependencies.
+
+### Setup
+Run the following commands to setup the project
+
+```sh
+cp .env.example .env
+yarn install
+```
+
+### Commands
+
+Install node dependencies:
+```sh
+yarn (install)
+```
+
+Run dev server for development in the browser:
+```sh
+yarn dev
+```
+
+To build application for production:
+```sh
+yarn build
 ```
