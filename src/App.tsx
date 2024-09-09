@@ -1,14 +1,29 @@
 import { useEffect, useRef, useState } from "react"
+import { PutObjectCommand, PutObjectCommandInput, S3Client } from "@aws-sdk/client-s3";
+import { v4 as uuidv4 } from 'uuid';
+import first from "lodash/first";
+import isEmpty from "lodash/isEmpty";
+import map from "lodash/map";
 import { ReactComponent as AddMediaIcon } from './svgs/add_media.svg'
 import { ReactComponent as HeartMediaIcon } from './svgs/heart_media.svg'
 import { ReactComponent as ClearIcon } from './svgs/clear.svg'
-import first from "lodash/first";
 
 type Form = {
   media: File[]
   message: string
   name: string
 }
+
+const bucket = import.meta.env.VITE_AWS_S3_BUCKET
+const client = new S3Client({
+  bucketEndpoint: false,
+  credentials: {
+    accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
+    accountId: import.meta.env.VITE_AWS_ACCOUNT_ID,
+    secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY,
+  },
+  region: import.meta.env.VITE_AWS_S3_REGION,
+});
 
 function App() {
   const [form, setForm] = useState<Form>({media: [], message: '', name: ''})
@@ -51,19 +66,50 @@ function App() {
 
   const handleSend = () => {
     if (!(first(form.media) instanceof File)) return
+    const requestID = uuidv4()
 
-    formWrapper.current?.classList.add('hidden')
-    thanksWrapper.current?.classList.remove('hidden')
+    let params = map(form.media, (file): PutObjectCommandInput => ({
+      Body: file,
+      Bucket: bucket,
+      Key: `${requestID}/${file.name}`,
+    }));
 
-    setTimeout(() => {
-      handleFormChange('message', '')
-      handleClearMedia()
-    }, 300)
+    if (!isEmpty(form.name) || !isEmpty(form.message)) {
+      const message = new Blob(
+        [`Ime: ${form.name || 'Anonimno'}\n\nPoruka: ${form.message || ''}`],
+        { type: 'text/plain' }
+      )
 
-    timeoutRef.current = setTimeout(() => {
-      thanksWrapper.current?.classList.add('hidden')
-      formWrapper.current?.classList.remove('hidden')
-    }, 5000)
+      params = [
+        ...params,
+        {
+          Body: message,
+          Bucket: bucket,
+          Key: `${requestID}/message.txt`,
+        }
+      ]
+    }
+
+    formWrapper.current?.classList.add('hidden');
+    thanksWrapper.current?.classList.remove('hidden');
+
+    Promise.all(map(params, (input) => client.send(new PutObjectCommand(input))))
+    .then(() => {
+      handleFormChange('message', '');
+      handleClearMedia();
+    })
+    .catch((err) => {
+      console.error("ERROR:", err);
+
+      handleFormChange('message', '');
+      handleClearMedia();
+    })
+    .finally(() => {
+      timeoutRef.current = setTimeout(() => {
+        thanksWrapper.current?.classList.add('hidden');
+        formWrapper.current?.classList.remove('hidden');
+      }, 5000);
+    })
   }
 
   return (

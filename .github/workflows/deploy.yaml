@@ -40,8 +40,13 @@ jobs:
         run: yarn build
         env:
           DEPLOYMENT_REPO: ${{ github.event.repository.name }}
-          VITE_SITE_TITLE: ${{ vars.SITE_TITLE }}
+          VITE_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          VITE_AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          VITE_AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          VITE_AWS_S3_REGION: ${{ secrets.AWS_S3_REGION }}
+          VITE_AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           VITE_HEADER: ${{ vars.HEADER }}
+          VITE_SITE_TITLE: ${{ vars.SITE_TITLE }}
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4

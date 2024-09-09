@@ -249,9 +249,10 @@ main {
     flex-direction: column;
     gap: 20px;
     justify-content: center;
-    left: 0;
+    left: -20px;
+    padding: 20px;
     position: absolute;
-    top: 0;
+    top: -20px;
     width: 100%;
     z-index: 1;
 
