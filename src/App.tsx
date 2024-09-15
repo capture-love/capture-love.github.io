@@ -7,6 +7,7 @@ import map from "lodash/map";
 import { ReactComponent as AddMediaIcon } from './svgs/add_media.svg'
 import { ReactComponent as HeartMediaIcon } from './svgs/heart_media.svg'
 import { ReactComponent as ClearIcon } from './svgs/clear.svg'
+import { get, split } from "lodash";
 
 type Form = {
   media: File[]
@@ -31,6 +32,7 @@ function App() {
   const formWrapper = useRef<HTMLDivElement>(null);
   const thanksWrapper = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout>();
+  const hasAttachedMedia = first(form.media) instanceof File
 
   useEffect(() => {
     const savedName = localStorage.getItem('capture-love-name')
@@ -65,8 +67,8 @@ function App() {
   }
 
   const handleSend = () => {
-    if (!(first(form.media) instanceof File)) return
-    const requestID = uuidv4()
+    if (!hasAttachedMedia) return
+    const requestID = `${new Date().toISOString()}-${get(split(uuidv4(), '-'), '[0]', Date.now().toString())}`
 
     let params = map(form.media, (file): PutObjectCommandInput => ({
       Body: file,
@@ -140,7 +142,7 @@ function App() {
               onChange={(e) => handleFormChange('message', e.target.value)}
               rows={5}
             />
-            {(first(form.media) instanceof File) ? (
+            {hasAttachedMedia ? (
               <div className="file-wrapper">
                 <ClearIcon className="clear" onClick={handleClearMedia} />
                 <h3 className="ready-message">
@@ -158,7 +160,7 @@ function App() {
               </div>
             )}
 
-            <button className="submit" onClick={handleSend}>Pošalji</button>
+            <button className="submit" disabled={!hasAttachedMedia} onClick={handleSend}>Pošalji</button>
           </div>
           <div ref={thanksWrapper} className="thank-you-card hidden">
             <h2>Hvala Vam!</h2>
