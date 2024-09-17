@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from "react"
 import { PutObjectCommand, PutObjectCommandInput, S3Client } from "@aws-sdk/client-s3";
-import { v4 as uuidv4 } from 'uuid';
+import { nanoid } from 'nanoid';
 import first from "lodash/first";
 import isEmpty from "lodash/isEmpty";
 import map from "lodash/map";
 import { ReactComponent as AddMediaIcon } from './svgs/add_media.svg'
 import { ReactComponent as HeartMediaIcon } from './svgs/heart_media.svg'
 import { ReactComponent as ClearIcon } from './svgs/clear.svg'
-import { get, split } from "lodash";
 
 type Form = {
   media: File[]
@@ -68,7 +67,7 @@ function App() {
 
   const handleSend = () => {
     if (!hasAttachedMedia) return
-    const requestID = `${new Date().toISOString()}-${get(split(uuidv4(), '-'), '[0]', Date.now().toString())}`
+    const requestID = `${new Date().toISOString()}-${nanoid(6)}`
 
     let params = map(form.media, (file): PutObjectCommandInput => ({
       Body: file,
