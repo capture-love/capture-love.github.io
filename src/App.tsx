@@ -1,12 +1,13 @@
-import { useEffect, useRef, useState } from "react"
-import { PutObjectCommand, PutObjectCommandInput, S3Client } from "@aws-sdk/client-s3";
+import { PutObjectCommand, PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3';
+import first from 'lodash/first';
+import isEmpty from 'lodash/isEmpty';
+import map from 'lodash/map';
 import { nanoid } from 'nanoid';
-import first from "lodash/first";
-import isEmpty from "lodash/isEmpty";
-import map from "lodash/map";
-import { ReactComponent as AddMediaIcon } from './svgs/add_media.svg'
-import { ReactComponent as HeartMediaIcon } from './svgs/heart_media.svg'
-import { ReactComponent as ClearIcon } from './svgs/clear.svg'
+import { useEffect, useRef, useState } from 'react';
+
+import { ReactComponent as AddMediaIcon } from './svgs/add_media.svg';
+import { ReactComponent as ClearIcon } from './svgs/clear.svg';
+import { ReactComponent as HeartMediaIcon } from './svgs/heart_media.svg';
 
 type Form = {
   media: File[]
@@ -14,7 +15,7 @@ type Form = {
   name: string
 }
 
-const bucket = import.meta.env.VITE_AWS_S3_BUCKET
+const bucket = import.meta.env.VITE_AWS_S3_BUCKET;
 const client = new S3Client({
   bucketEndpoint: false,
   credentials: {
@@ -26,48 +27,50 @@ const client = new S3Client({
 });
 
 function App() {
-  const [form, setForm] = useState<Form>({media: [], message: '', name: ''})
+  const [form, setForm] = useState<Form>({ media: [], message: '', name: '' });
   const fileInput = useRef<HTMLInputElement>(null);
   const formWrapper = useRef<HTMLDivElement>(null);
   const thanksWrapper = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout>();
-  const hasAttachedMedia = first(form.media) instanceof File
+  const hasAttachedMedia = first(form.media) instanceof File;
 
   useEffect(() => {
-    const savedName = localStorage.getItem('capture-love-name')
-    if (!savedName) return
+    const savedName = localStorage.getItem('capture-love-name');
+    if (!savedName) return;
 
-    setForm({...form, name: savedName})
+    setForm({ ...form, name: savedName });
 
     return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    }
-  }, [])
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleFormChange = (key: keyof typeof form, value: string | File[]) => {
-    setForm({...form, [key]: value})
-    if (key === 'name') localStorage.setItem('capture-love-name', value as string)
-  }
+    setForm({ ...form, [key]: value });
+    if (key === 'name') localStorage.setItem('capture-love-name', value as string);
+  };
 
   const handleImportMedia = () => {
     const inputFiles = fileInput.current?.files;
-    if (!inputFiles) return
+    if (!inputFiles) return;
 
     handleFormChange('media', Array.from(inputFiles));
   };
 
   const handleChooseMedia = () => {
-    fileInput.current?.click()
-  }
+    fileInput.current?.click();
+  };
 
   const handleClearMedia = () => {
-    if (fileInput.current) fileInput.current.value = ''
+    if (fileInput.current) fileInput.current.value = '';
     handleFormChange('media', []);
-  }
+  };
 
   const handleSend = () => {
-    if (!hasAttachedMedia) return
-    const requestID = `${new Date().toISOString()}-${nanoid(6)}`
+    if (!hasAttachedMedia) return;
+    const requestID = `${new Date().toISOString()}-${nanoid(6)}`;
 
     let params = map(form.media, (file): PutObjectCommandInput => ({
       Body: file,
@@ -78,8 +81,8 @@ function App() {
     if (!isEmpty(form.name) || !isEmpty(form.message)) {
       const message = new Blob(
         [`Ime: ${form.name || 'Anonimno'}\n\nPoruka: ${form.message || ''}`],
-        { type: 'text/plain' }
-      )
+        { type: 'text/plain' },
+      );
 
       params = [
         ...params,
@@ -87,31 +90,32 @@ function App() {
           Body: message,
           Bucket: bucket,
           Key: `${requestID}/message.txt`,
-        }
-      ]
+        },
+      ];
     }
 
     formWrapper.current?.classList.add('hidden');
     thanksWrapper.current?.classList.remove('hidden');
 
     Promise.all(map(params, (input) => client.send(new PutObjectCommand(input))))
-    .then(() => {
-      handleFormChange('message', '');
-      handleClearMedia();
-    })
-    .catch((err) => {
-      console.error("ERROR:", err);
+      .then(() => {
+        handleFormChange('message', '');
+        handleClearMedia();
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error('ERROR:', err);
 
-      handleFormChange('message', '');
-      handleClearMedia();
-    })
-    .finally(() => {
-      timeoutRef.current = setTimeout(() => {
-        thanksWrapper.current?.classList.add('hidden');
-        formWrapper.current?.classList.remove('hidden');
-      }, 5000);
-    })
-  }
+        handleFormChange('message', '');
+        handleClearMedia();
+      })
+      .finally(() => {
+        timeoutRef.current = setTimeout(() => {
+          thanksWrapper.current?.classList.add('hidden');
+          formWrapper.current?.classList.remove('hidden');
+        }, 5000);
+      });
+  };
 
   return (
     <>
@@ -168,7 +172,7 @@ function App() {
         </div>
       </main>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

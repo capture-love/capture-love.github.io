@@ -18,15 +18,16 @@ class ErrorBoundary extends React.Component<Props, State> {
     return { hasError: true };
   }
 
-  componentDidCatch() {    
-    alert("Ups... došlo je do greške, pokušajte ponovo");
+  componentDidCatch() {
+    // eslint-disable-next-line no-alert
+    alert('Ups... došlo je do greške, pokušajte ponovo');
     localStorage.clear();
     sessionStorage.clear();
-    location.reload();
+    window.location.reload();
   }
 
   render() {
-    if (this.state.hasError) return null
+    if (this.state.hasError) return null;
 
     return this.props.children;
   }
