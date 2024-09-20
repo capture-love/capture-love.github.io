@@ -39,7 +39,8 @@ jobs:
       - name: Build application
         run: yarn build
         env:
-          DEPLOYMENT_REPO: ${{ github.event.repository.name }}
+          # Not needed when the repo is deployed on the subdomain and not subpath
+          # DEPLOYMENT_REPO: ${{ github.event.repository.name }}
           VITE_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           VITE_AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           VITE_AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
