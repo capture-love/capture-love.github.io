@@ -30,8 +30,9 @@ function App() {
   const [form, setForm] = useState<Form>({ media: [], message: '', name: '' });
   const fileInput = useRef<HTMLInputElement>(null);
   const formWrapper = useRef<HTMLDivElement>(null);
+  const loadingWrapper = useRef<HTMLDivElement>(null);
   const thanksWrapper = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout>(undefined);
   const hasAttachedMedia = first(form.media) instanceof File;
 
   useEffect(() => {
@@ -44,7 +45,20 @@ function App() {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const handleAlertMessage = (e) => {
+      if (loadingWrapper.current?.classList.contains('hidden')) return;
+
+      e.preventDefault();
+      e.returnValue = 'Slanje priloženoga u tijeku...\nMolim nemojte ugasiti uređaj i ovaj prozor dok slanje nije gotovo!';
+    };
+
+    window.addEventListener('beforeunload', handleAlertMessage);
+
+    return () => window.removeEventListener('beforeunload', handleAlertMessage);
   }, []);
 
   const handleFormChange = (key: keyof typeof form, value: string | File[]) => {
@@ -70,58 +84,68 @@ function App() {
 
   const handleSend = () => {
     if (!hasAttachedMedia) return;
-    const requestID = `${new Date().toISOString()}-${nanoid(6)}`;
+    try {
+      formWrapper.current?.classList.add('hidden');
+      loadingWrapper.current?.classList.remove('hidden');
 
-    let params = map(form.media, (file): PutObjectCommandInput => ({
-      Body: file,
-      Bucket: bucket,
-      Key: `${requestID}/${file.name}`,
-    }));
+      const requestID = `${new Date().toISOString()}-${nanoid(6)}`;
 
-    if (!isEmpty(form.name) || !isEmpty(form.message)) {
-      const message = new Blob(
-        [`Ime: ${form.name || 'Anonimno'}\n\nPoruka: ${form.message || ''}`],
-        { type: 'text/plain' },
-      );
+      let params = map(form.media, (file): PutObjectCommandInput => ({
+        Body: file,
+        Bucket: bucket,
+        Key: `${requestID}/${file.name}`,
+      }));
 
-      params = [
-        ...params,
-        {
-          Body: message,
-          Bucket: bucket,
-          Key: `${requestID}/message.txt`,
-        },
-      ];
+      if (!isEmpty(form.name) || !isEmpty(form.message)) {
+        const message = new Blob(
+          [`Ime: ${form.name || 'Anonimno'}\n\nPoruka: ${form.message || ''}`],
+          { type: 'text/plain' },
+        );
+
+        params = [
+          ...params,
+          {
+            Body: message,
+            Bucket: bucket,
+            Key: `${requestID}/message.txt`,
+          },
+        ];
+      }
+
+      Promise.all(map(params, (input) => client.send(new PutObjectCommand(input))))
+        .then(() => {
+          loadingWrapper.current?.classList.add('hidden');
+          thanksWrapper.current?.classList.remove('hidden');
+        })
+        .finally(() => {
+          handleFormChange('message', '');
+          handleClearMedia();
+
+          timeoutRef.current = setTimeout(() => {
+            thanksWrapper.current?.classList.add('hidden');
+            formWrapper.current?.classList.remove('hidden');
+          }, 5000);
+        });
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('ERROR:', err);
+
+      loadingWrapper.current?.classList.add('hidden');
+      thanksWrapper.current?.classList.add('hidden');
+      formWrapper.current?.classList.remove('hidden');
     }
-
-    formWrapper.current?.classList.add('hidden');
-    thanksWrapper.current?.classList.remove('hidden');
-
-    Promise.all(map(params, (input) => client.send(new PutObjectCommand(input))))
-      .then(() => {
-        handleFormChange('message', '');
-        handleClearMedia();
-      })
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error('ERROR:', err);
-
-        handleFormChange('message', '');
-        handleClearMedia();
-      })
-      .finally(() => {
-        timeoutRef.current = setTimeout(() => {
-          thanksWrapper.current?.classList.add('hidden');
-          formWrapper.current?.classList.remove('hidden');
-        }, 5000);
-      });
   };
 
   return (
     <>
       <div className="background" />
       <main>
-        <h1 className="header">{import.meta.env.VITE_HEADER}</h1>
+        <div className="header">
+          <h1>{import.meta.env.VITE_HEADER}</h1>
+          {import.meta.env.VITE_HEADER_DATE && (
+            <h2>{import.meta.env.VITE_HEADER_DATE}</h2>
+          )}
+        </div>
         <div className="content-wrapper">
           <div ref={formWrapper} className="form-wrapper">
             <input
@@ -165,9 +189,14 @@ function App() {
 
             <button className="submit" disabled={!hasAttachedMedia} onClick={handleSend}>Pošalji</button>
           </div>
+          <div ref={loadingWrapper} className="loading-wrapper hidden">
+            <h3>Slanje priloženoga u tijeku...</h3>
+            <p>Molim nemojte ugasiti uređaj i ovaj prozor dok slanje nije gotovo!</p>
+            <p>Ovisno o broju zapisa i brzini interneta ovo bi moglo potrajati koju minutu :)</p>
+          </div>
           <div ref={thanksWrapper} className="thank-you-card hidden">
             <h2>Hvala Vam!</h2>
-            <p>Hvala što ste naš dan učinili nezaboravnim!</p>
+            <p>Hvala Vam što ste svojom prisutnošću umnožili radost zbog početka našeg zajedničkog života!</p>
           </div>
         </div>
       </main>

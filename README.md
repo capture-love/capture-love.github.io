@@ -79,3 +79,14 @@ To build application for production:
 ```sh
 yarn build
 ```
+
+## Post event
+
+### Download whole S3 bucket
+
+Example:
+- bucket name (same as ENV variable) = `capture-love`
+- AWS CLI profile = `capture-love`
+```sh
+aws s3 sync s3://capture-love . --profile capture-love
+```
