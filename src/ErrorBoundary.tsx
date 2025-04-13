@@ -20,7 +20,7 @@ class ErrorBoundary extends React.Component<Props, State> {
 
   componentDidCatch() {
     // eslint-disable-next-line no-alert
-    alert('Ups... došlo je do greške, pokušajte ponovo');
+    alert('Ups... došlo je do greške!\nMolimo provjerite vašu internet vezu i pokušajte ponovno.\nAko se greška ponovi, pokušajte ponovo kasnije i hvala Vam na razumijevanju.');
     localStorage.clear();
     sessionStorage.clear();
     window.location.reload();

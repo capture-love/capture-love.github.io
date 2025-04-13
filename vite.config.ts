@@ -4,12 +4,18 @@ import svgr from '@svgr/rollup'
 
 export default ({ mode }: UserConfig) => {
   // import.meta.env.SECRET available here with: process.env.SECRET
-  process.env = {...process.env, ...loadEnv(mode as  string, process.cwd())};
+  process.env = { ...process.env, ...loadEnv(mode as string, process.cwd()) };
   const base = process.env.DEPLOYMENT_REPO;
+  const host = process.env.VITE_ALLOWED_HOST;
 
   // https://vitejs.dev/config/
   return defineConfig({
     base: base ? `/${base}/` : '/',
+    ...(host && {
+      server: {
+        allowedHosts: [host],
+      }
+    }),
     plugins: [
       react(),
       svgr({
