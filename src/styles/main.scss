@@ -14,6 +14,17 @@
   font-style: normal;
 }
 
+@mixin whiteFadeBG {
+  background-color: colors.$white;
+  background-image: radial-gradient(
+    rgba(colors.$white, 1) 0%,
+    rgba(colors.$white, 0.75) 50%,
+    rgba(colors.$white, 0) 100%
+  );
+  border-radius: 25px;
+  box-shadow: 0 20px 20px colors.$white;
+}
+
 /* Code for Firefox */
 ::-moz-selection {
   color: colors.$white;
@@ -118,6 +129,7 @@ main {
 
     h2 {
       font-size: 24px;
+      margin-top: 10px;
     }
   }
 
@@ -255,13 +267,9 @@ main {
   }
 
   .loading-wrapper,
-  .thank-you-card {
-    background-color: transparent; /* For browsers that do not support gradients */
-    background-image: radial-gradient(
-      rgba(colors.$white, 1) 0%,
-      rgba(colors.$white, 0.75) 50%,
-      rgba(colors.$white, 0) 100%
-    );
+  .error-wrapper,
+  .success-wrapper {
+    @include whiteFadeBG();
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -289,7 +297,8 @@ main {
 
   .form-wrapper,
   .loading-wrapper,
-  .thank-you-card {
+  .error-wrapper,
+  .success-wrapper {
     transition: opacity 0.3s;
 
     &.hidden {

@@ -31,7 +31,8 @@ function App() {
   const fileInput = useRef<HTMLInputElement>(null);
   const formWrapper = useRef<HTMLDivElement>(null);
   const loadingWrapper = useRef<HTMLDivElement>(null);
-  const thanksWrapper = useRef<HTMLDivElement>(null);
+  const errorWrapper = useRef<HTMLDivElement>(null);
+  const successWrapper = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout>(undefined);
   const hasAttachedMedia = first(form.media) instanceof File;
 
@@ -86,6 +87,8 @@ function App() {
     if (!hasAttachedMedia) return;
     try {
       formWrapper.current?.classList.add('hidden');
+      errorWrapper.current?.classList.add('hidden');
+      successWrapper.current?.classList.add('hidden');
       loadingWrapper.current?.classList.remove('hidden');
 
       const requestID = `${new Date().toISOString()}-${nanoid(6)}`;
@@ -114,25 +117,36 @@ function App() {
 
       Promise.all(map(params, (input) => client.send(new PutObjectCommand(input))))
         .then(() => {
-          loadingWrapper.current?.classList.add('hidden');
-          thanksWrapper.current?.classList.remove('hidden');
-        })
-        .finally(() => {
           handleFormChange('message', '');
           handleClearMedia();
 
+          loadingWrapper.current?.classList.add('hidden');
+          successWrapper.current?.classList.remove('hidden');
+
           timeoutRef.current = setTimeout(() => {
-            thanksWrapper.current?.classList.add('hidden');
+            loadingWrapper.current?.classList.add('hidden');
+            successWrapper.current?.classList.add('hidden');
+            errorWrapper.current?.classList.add('hidden');
             formWrapper.current?.classList.remove('hidden');
-          }, 5000);
-        });
+          }, 10000);
+        }).catch((err) => { throw err; });
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('ERROR:', err);
 
+      handleFormChange('message', '');
+      handleClearMedia();
+
       loadingWrapper.current?.classList.add('hidden');
-      thanksWrapper.current?.classList.add('hidden');
-      formWrapper.current?.classList.remove('hidden');
+      successWrapper.current?.classList.add('hidden');
+      errorWrapper.current?.classList.remove('hidden');
+
+      timeoutRef.current = setTimeout(() => {
+        loadingWrapper.current?.classList.add('hidden');
+        successWrapper.current?.classList.add('hidden');
+        errorWrapper.current?.classList.add('hidden');
+        formWrapper.current?.classList.remove('hidden');
+      }, 10000);
     }
   };
 
@@ -192,9 +206,14 @@ function App() {
           <div ref={loadingWrapper} className="loading-wrapper hidden">
             <h3>Slanje priloženoga u tijeku...</h3>
             <p>Molim nemojte ugasiti uređaj i ovaj prozor dok slanje nije gotovo!</p>
-            <p>Ovisno o broju zapisa i brzini interneta ovo bi moglo potrajati koju minutu :)</p>
+            <p>Ovisno o broju zapisa i brzini interneta ovo bi moglo potrajati koju minutu.</p>
           </div>
-          <div ref={thanksWrapper} className="thank-you-card hidden">
+          <div ref={errorWrapper} className="error-wrapper hidden">
+            <h3>Ups! Došlo je do greške pri slanju.</h3>
+            <p>Molimo provjerite vašu internet vezu i pokušajte ponovno.</p>
+            <p>Ako se greška ponovi, pokušajte ponovo kasnije i hvala Vam na razumijevanju.</p>
+          </div>
+          <div ref={successWrapper} className="success-wrapper hidden">
             <h2>Hvala Vam!</h2>
             <p>Hvala Vam što ste svojom prisutnošću umnožili radost zbog početka našeg zajedničkog života!</p>
           </div>

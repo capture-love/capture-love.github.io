@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
+  readonly VITE_ALLOWED_HOST?: string
   readonly VITE_AWS_ACCESS_KEY_ID: string
   readonly VITE_AWS_ACCOUNT_ID: string
   readonly VITE_AWS_S3_BUCKET: string
