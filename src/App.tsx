@@ -128,7 +128,7 @@ function App() {
             successWrapper.current?.classList.add('hidden');
             errorWrapper.current?.classList.add('hidden');
             formWrapper.current?.classList.remove('hidden');
-          }, 10000);
+          }, 5000);
         }).catch((err) => { throw err; });
     } catch (err) {
       // eslint-disable-next-line no-console
