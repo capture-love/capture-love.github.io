@@ -164,6 +164,7 @@ function App() {
           <div ref={formWrapper} className="form-wrapper">
             <input
               ref={fileInput}
+              id="media"
               onChange={handleImportMedia}
               type="file"
               accept="image/*,video/*"
@@ -171,12 +172,15 @@ function App() {
               hidden
             />
             <input
+              id="primary"
               className="text-input"
               placeholder="Ime / Nadimak"
               value={form.name}
               onChange={(e) => handleFormChange('name', e.target.value)}
+              autoComplete="off"
             />
             <textarea
+              id="message"
               className="text-input"
               placeholder="Poruka za mladence..."
               value={form.message}
