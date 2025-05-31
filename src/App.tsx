@@ -219,7 +219,7 @@ function App() {
           </div>
           <div ref={successWrapper} className="success-wrapper hidden">
             <h2>Hvala Vam!</h2>
-            <p>Hvala Vam što ste svojom prisutnošću umnožili radost zbog početka našeg zajedničkog života!</p>
+            <p>Hvala što ste svojim prisustvom uljepšali naš poseban dan i učinili ga nezaboravnim!</p>
           </div>
         </div>
       </main>
