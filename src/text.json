@@ -1,0 +1,27 @@
+{
+  "data": {
+    "name": "Ime",
+    "anonymus": "Anonimno",
+    "message": "Poruka"
+  },
+  "form": {
+    "name": "Ime / Nadimak",
+    "message": "Poruka za mladence...",
+    "media": "Odaberite slike i videe\nkoje želite podijeliti",
+    "attached": "priloženo",
+    "submit": "Pošalji"
+  },
+  "loading": {
+    "title": "Slanje priloženoga u tijeku...",
+    "message": "Molim nemojte ugasiti uređaj i ovaj prozor dok slanje nije gotovo!\n\nOvisno o broju zapisa i brzini interneta ovo bi moglo potrajati koju minutu."
+  },
+  "success": {
+    "title": "Hvala Vam!",
+    "message": "Hvala što ste svojim prisustvom uljepšali naš poseban dan i učinili ga nezaboravnim!"
+  },
+  "error": {
+    "alert": "Ups... došlo je do greške!\nMolimo provjerite vašu internet vezu i pokušajte ponovno.\nAko se greška ponovi, pokušajte ponovo kasnije i hvala Vam na razumijevanju.",
+    "title": "Ups! Došlo je do greške pri slanju.",
+    "message": "Molimo provjerite vašu internet vezu i pokušajte ponovno.\n\nAko se greška ponovi, pokušajte ponovo kasnije i hvala Vam na razumijevanju."
+  }
+}
