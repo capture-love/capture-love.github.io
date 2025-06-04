@@ -5,18 +5,18 @@ import map from 'lodash/map';
 import { nanoid } from 'nanoid';
 import { useEffect, useRef, useState } from 'react';
 
+import type { Form } from './types';
+
+import DevMenu from './DevMenu';
 import { ReactComponent as AddMediaIcon } from './svgs/add_media.svg';
 import { ReactComponent as ClearIcon } from './svgs/clear.svg';
 import { ReactComponent as HeartMediaIcon } from './svgs/heart_media.svg';
-
-type Form = {
-  media: File[]
-  message: string
-  name: string
-}
+import text from './text.json';
+import { UIState } from './types';
 
 const bucket = import.meta.env.VITE_AWS_S3_BUCKET;
 const client = new S3Client({
+  retryMode: 'standard',
   bucketEndpoint: false,
   credentials: {
     accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
@@ -83,13 +83,52 @@ function App() {
     handleFormChange('media', []);
   };
 
-  const handleSend = () => {
+  const handleUiState = (state: UIState, withCleanup?: boolean, cleanupDelay?: number) => {
+    switch (state) {
+      case UIState.loading:
+        formWrapper.current?.classList.add('hidden');
+        successWrapper.current?.classList.add('hidden');
+        errorWrapper.current?.classList.add('hidden');
+        loadingWrapper.current?.classList.remove('hidden');
+        break;
+
+      case UIState.success:
+        formWrapper.current?.classList.add('hidden');
+        loadingWrapper.current?.classList.add('hidden');
+        errorWrapper.current?.classList.add('hidden');
+        successWrapper.current?.classList.remove('hidden');
+        break;
+
+      case UIState.error:
+        formWrapper.current?.classList.add('hidden');
+        loadingWrapper.current?.classList.add('hidden');
+        successWrapper.current?.classList.add('hidden');
+        errorWrapper.current?.classList.remove('hidden');
+        break;
+
+      case UIState.default:
+      default:
+        loadingWrapper.current?.classList.add('hidden');
+        successWrapper.current?.classList.add('hidden');
+        errorWrapper.current?.classList.add('hidden');
+        formWrapper.current?.classList.remove('hidden');
+        break;
+    }
+
+    if (withCleanup) {
+      timeoutRef.current = setTimeout(() => {
+        loadingWrapper.current?.classList.add('hidden');
+        successWrapper.current?.classList.add('hidden');
+        errorWrapper.current?.classList.add('hidden');
+        formWrapper.current?.classList.remove('hidden');
+      }, cleanupDelay || 5000);
+    }
+  };
+
+  const handleSend = async () => {
     if (!hasAttachedMedia) return;
     try {
-      formWrapper.current?.classList.add('hidden');
-      errorWrapper.current?.classList.add('hidden');
-      successWrapper.current?.classList.add('hidden');
-      loadingWrapper.current?.classList.remove('hidden');
+      handleUiState(UIState.loading);
 
       const requestID = `${new Date().toISOString()}-${nanoid(6)}`;
 
@@ -101,7 +140,7 @@ function App() {
 
       if (!isEmpty(form.name) || !isEmpty(form.message)) {
         const message = new Blob(
-          [`Ime: ${form.name || 'Anonimno'}\n\nPoruka: ${form.message || ''}`],
+          [`${text.data.name}: ${form.name || text.data.anonymus}\n\n${text.data.message}: ${form.message || ''}`],
           { type: 'text/plain' },
         );
 
@@ -115,38 +154,18 @@ function App() {
         ];
       }
 
-      Promise.all(map(params, (input) => client.send(new PutObjectCommand(input))))
-        .then(() => {
-          handleFormChange('message', '');
-          handleClearMedia();
+      await Promise.all(map(params, (input) => client.send(new PutObjectCommand(input))));
 
-          loadingWrapper.current?.classList.add('hidden');
-          successWrapper.current?.classList.remove('hidden');
-
-          timeoutRef.current = setTimeout(() => {
-            loadingWrapper.current?.classList.add('hidden');
-            successWrapper.current?.classList.add('hidden');
-            errorWrapper.current?.classList.add('hidden');
-            formWrapper.current?.classList.remove('hidden');
-          }, 5000);
-        }).catch((err) => { throw err; });
+      handleFormChange('message', '');
+      handleClearMedia();
+      handleUiState(UIState.success, true, 5000);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('ERROR:', err);
 
       handleFormChange('message', '');
       handleClearMedia();
-
-      loadingWrapper.current?.classList.add('hidden');
-      successWrapper.current?.classList.add('hidden');
-      errorWrapper.current?.classList.remove('hidden');
-
-      timeoutRef.current = setTimeout(() => {
-        loadingWrapper.current?.classList.add('hidden');
-        successWrapper.current?.classList.add('hidden');
-        errorWrapper.current?.classList.add('hidden');
-        formWrapper.current?.classList.remove('hidden');
-      }, 10000);
+      handleUiState(UIState.error, true, 10000);
     }
   };
 
@@ -154,6 +173,7 @@ function App() {
     <>
       <div className="background" />
       <main>
+        <DevMenu onSelect={handleUiState} />
         <div className="header">
           <h1>{import.meta.env.VITE_HEADER}</h1>
           {import.meta.env.VITE_HEADER_DATE && (
@@ -172,13 +192,13 @@ function App() {
             />
             <input
               className="text-input"
-              placeholder="Ime / Nadimak"
+              placeholder={text.form.name}
               value={form.name}
               onChange={(e) => handleFormChange('name', e.target.value)}
             />
             <textarea
               className="text-input"
-              placeholder="Poruka za mladence..."
+              placeholder={text.form.message}
               value={form.message}
               onChange={(e) => handleFormChange('message', e.target.value)}
               rows={5}
@@ -189,33 +209,33 @@ function App() {
                 <h3 className="ready-message">
                   <b>+{form.media.length}</b>
                   <HeartMediaIcon className="icon" />
-                  priloženo
+                  {text.form.attached}
                 </h3>
               </div>
             ) : (
               <div className="file-input" onClick={handleChooseMedia}>
                 <div className="placeholder">
                   <AddMediaIcon className="icon" />
-                  <span>Odaberite slike i videe<br />koje želite podijeliti</span>
+                  <span>{text.form.media}</span>
                 </div>
               </div>
             )}
 
-            <button className="submit" disabled={!hasAttachedMedia} onClick={handleSend}>Pošalji</button>
+            <button className="submit" disabled={!hasAttachedMedia} onClick={handleSend}>
+              {text.form.submit}
+            </button>
           </div>
           <div ref={loadingWrapper} className="loading-wrapper hidden">
-            <h3>Slanje priloženoga u tijeku...</h3>
-            <p>Molim nemojte ugasiti uređaj i ovaj prozor dok slanje nije gotovo!</p>
-            <p>Ovisno o broju zapisa i brzini interneta ovo bi moglo potrajati koju minutu.</p>
+            <h3>{text.loading.title}</h3>
+            <p>{text.loading.message}</p>
           </div>
           <div ref={errorWrapper} className="error-wrapper hidden">
-            <h3>Ups! Došlo je do greške pri slanju.</h3>
-            <p>Molimo provjerite vašu internet vezu i pokušajte ponovno.</p>
-            <p>Ako se greška ponovi, pokušajte ponovo kasnije i hvala Vam na razumijevanju.</p>
+            <h3>{text.error.title}</h3>
+            <p>{text.error.message}</p>
           </div>
           <div ref={successWrapper} className="success-wrapper hidden">
-            <h2>Hvala Vam!</h2>
-            <p>Hvala Vam što ste svojom prisutnošću umnožili radost zbog početka našeg zajedničkog života!</p>
+            <h2>{text.success.title}</h2>
+            <p>{text.success.message}</p>
           </div>
         </div>
       </main>

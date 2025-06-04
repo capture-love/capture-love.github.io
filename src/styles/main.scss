@@ -15,14 +15,14 @@
 }
 
 @mixin whiteFadeBG {
-  background-color: colors.$white;
+  background-color: transparent;
   background-image: radial-gradient(
     rgba(colors.$white, 1) 0%,
     rgba(colors.$white, 0.75) 50%,
     rgba(colors.$white, 0) 100%
   );
   border-radius: 25px;
-  box-shadow: 0 20px 20px colors.$white;
+  box-shadow: 0 0 20px colors.$white;
 }
 
 /* Code for Firefox */
@@ -258,10 +258,9 @@ main {
       width: 100%;
 
       &:disabled {
-        background-image: linear-gradient(rgba(colors.$black, 0.1), rgba(colors.$black, 0.1)),
-          linear-gradient(colors.$primary, colors.$primary);
         border: 1px solid rgba(colors.$black, 0);
         cursor: not-allowed;
+        filter: grayscale(0.75);
       }
     }
   }
@@ -278,6 +277,7 @@ main {
     padding: 20px;
     position: absolute;
     top: -20px;
+    white-space: pre-wrap;
     width: 100%;
     z-index: 1;
 
@@ -304,6 +304,32 @@ main {
     &.hidden {
       opacity: 0;
       pointer-events: none;
+    }
+  }
+}
+
+.dev-menu {
+  background-color: #fff;
+  border-radius: 0 0 10px 0;
+  border: 1px solid rgba(#000, 0.5);
+  color: #000;
+  display: flex;
+  left: 0;
+  padding: 10px;
+  position: fixed;
+  top: 0;
+  z-index: 999;
+
+  .ui-menu {
+    align-items: center;
+    display: flex;
+    gap: 5px;
+
+    select {
+      border-radius: 5px;
+      border: 1px solid rgba(#000, 0.5);
+      cursor: pointer;
+      padding: 2px 5px;
     }
   }
 }
