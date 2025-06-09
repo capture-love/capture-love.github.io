@@ -21,7 +21,8 @@
   },
   "error": {
     "alert": "Ups... došlo je do greške!\nMolimo provjerite vašu internet vezu i pokušajte ponovno.\nAko se greška ponovi, pokušajte ponovo kasnije i hvala Vam na razumijevanju.",
-    "title": "Ups! Došlo je do greške pri slanju.",
-    "message": "Molimo provjerite vašu internet vezu i pokušajte ponovno.\n\nAko se greška ponovi, pokušajte ponovo kasnije i hvala Vam na razumijevanju."
+    "title": "Ups!\nDošlo je do greške pri slanju.",
+    "message": "Molimo provjerite vašu internet vezu i pokušajte ponovno.\n\nAko se greška ponovi, pokušajte ponovo kasnije i hvala Vam na razumijevanju.",
+    "retry": "Pokušaj ponovno"
   }
 }

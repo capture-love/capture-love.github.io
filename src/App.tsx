@@ -14,16 +14,22 @@ import { ReactComponent as HeartMediaIcon } from './svgs/heart_media.svg';
 import text from './text.json';
 import { UIState } from './types';
 
+const timeout = 5 * 60 * 1000; // ms (increase to 5min)
 const bucket = import.meta.env.VITE_AWS_S3_BUCKET;
 const client = new S3Client({
-  retryMode: 'standard',
-  bucketEndpoint: false,
+  region: import.meta.env.VITE_AWS_S3_REGION,
   credentials: {
     accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
     accountId: import.meta.env.VITE_AWS_ACCOUNT_ID,
     secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY,
   },
-  region: import.meta.env.VITE_AWS_S3_REGION,
+  requestHandler: {
+    connectionTimeout: timeout,
+    requestTimeout: timeout,
+    socketTimeout: timeout,
+  },
+  bucketEndpoint: false,
+  retryMode: 'standard',
 });
 
 function App() {
@@ -154,19 +160,22 @@ function App() {
         ];
       }
 
-      await Promise.all(map(params, (input) => client.send(new PutObjectCommand(input))));
+      await Promise.allSettled(map(params, (input) => client.send(new PutObjectCommand(input))));
 
-      handleFormChange('message', '');
       handleClearMedia();
       handleUiState(UIState.success, true, 5000);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('ERROR:', err);
 
-      handleFormChange('message', '');
-      handleClearMedia();
-      handleUiState(UIState.error, true, 10000);
+      handleUiState(UIState.error, true);
     }
+  };
+
+  const handleRetry = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.reload();
   };
 
   return (
@@ -236,6 +245,7 @@ function App() {
           <div ref={errorWrapper} className="error-wrapper hidden">
             <h3>{text.error.title}</h3>
             <p>{text.error.message}</p>
+            <button className="submit" onClick={handleRetry}>{text.error.retry}</button>
           </div>
           <div ref={successWrapper} className="success-wrapper hidden">
             <h2>{text.success.title}</h2>
