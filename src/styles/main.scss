@@ -114,7 +114,7 @@ main {
     border-radius: 100%;
     box-shadow: 0 0 20px colors.$white;
     color: colors.$primary;
-    font-size: 28px;
+    font-size: 36px;
     font-weight: 600;
     line-height: 30px;
     margin: 60px 0 40px 0;
@@ -128,7 +128,7 @@ main {
     }
 
     h2 {
-      font-size: 24px;
+      font-size: 28px;
       margin-top: 10px;
     }
   }
@@ -246,7 +246,7 @@ main {
       align-items: center;
       background-color: colors.$primary;
       border-radius: 100vw;
-      border: 1px solid rgba(colors.$black, 0.1);
+      border: 1px solid colors.$primary;
       color: colors.$white;
       cursor: pointer;
       display: flex;
@@ -258,7 +258,6 @@ main {
       width: 100%;
 
       &:disabled {
-        border: 1px solid rgba(colors.$black, 0);
         cursor: not-allowed;
         filter: grayscale(0.75);
       }
