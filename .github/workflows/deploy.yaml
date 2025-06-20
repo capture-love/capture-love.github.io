@@ -12,7 +12,7 @@ permissions:
   id-token: write
 
 env:
-  NODE_VERSION: 20.9.0
+  NODE_VERSION: 23.11
 
 jobs:
   test:
@@ -41,7 +41,6 @@ jobs:
         env:
           # Not needed when the repo is deployed on the subdomain and not subpath
           # DEPLOYMENT_REPO: ${{ github.event.repository.name }}
-          VITE_ALLOWED_HOST: ${{ secrets.VITE_ALLOWED_HOST }}
           VITE_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           VITE_AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           VITE_AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
@@ -57,7 +56,7 @@ jobs:
       - name: Upload build
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: "./dist"
 
   deploy:
     name: Deploy

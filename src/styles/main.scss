@@ -134,6 +134,7 @@ main {
   }
 
   .content-wrapper {
+    align-self: center;
     position: relative;
     max-width: 360px;
     width: 100%;
@@ -257,13 +258,6 @@ main {
     white-space: pre-wrap;
     width: 100%;
     z-index: 1;
-
-    h2 {
-      @include displayFont();
-      color: colors.$dark;
-      font-size: 24px;
-      margin-bottom: -5px;
-    }
 
     h3 {
       color: colors.$dark;

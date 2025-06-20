@@ -1,28 +1,28 @@
 {
   "data": {
-    "name": "Ime",
-    "anonymus": "Anonimno",
-    "message": "Poruka"
+    "name": "Name",
+    "anonymus": "Anonymous",
+    "message": "Message"
   },
   "form": {
-    "name": "Ime / Nadimak",
-    "message": "Poruka za mladence...",
-    "media": "Odaberite slike i videe\nkoje želite podijeliti",
-    "attached": "priloženo",
-    "submit": "Pošalji"
+    "name": "Name / Nickname",
+    "message": "Message for the newlyweds...",
+    "media": "Select photos and videos\nyou wish to share",
+    "attached": "attached",
+    "submit": "Send"
   },
   "loading": {
-    "title": "Slanje priloženoga u tijeku...",
-    "message": "Molim nemojte ugasiti uređaj i ovaj prozor dok slanje nije gotovo!\n\nOvisno o broju zapisa i brzini interneta ovo bi moglo potrajati koju minutu."
+    "title": "Uploading attachments...",
+    "message": "Please do not turn off your device or close this window until the upload is complete!\n\nDepending on the number of files and your internet speed, this may take a few minutes."
   },
   "success": {
-    "title": "Hvala Vam!",
-    "message": "Hvala što ste svojim prisustvom uljepšali naš poseban dan i učinili ga nezaboravnim!"
+    "title": "Thank you!",
+    "message": "Thank you for making our special day even more beautiful and unforgettable with your presence!"
   },
   "error": {
-    "alert": "Ups... došlo je do greške!\nMolimo provjerite vašu internet vezu i pokušajte ponovno.\nAko se greška ponovi, pokušajte ponovo kasnije i hvala Vam na razumijevanju.",
-    "title": "Ups!\nDošlo je do greške pri slanju.",
-    "message": "Molimo provjerite vašu internet vezu i pokušajte ponovno.\n\nAko se greška ponovi, pokušajte ponovo kasnije i hvala Vam na razumijevanju.",
-    "retry": "Pokušaj ponovno"
+    "alert": "Oops... something went wrong!\nPlease check your internet connection and try again.\nIf the error persists, please try again later and thank you for your understanding.",
+    "title": "Oops!\nThere was an error during upload.",
+    "message": "Please check your internet connection and try again.\n\nIf the error persists, please try again later and thank you for your understanding.",
+    "retry": "Try again"
   }
 }

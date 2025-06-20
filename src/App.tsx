@@ -248,7 +248,7 @@ function App() {
             <button className="submit" onClick={handleRetry}>{text.error.retry}</button>
           </div>
           <div ref={successWrapper} className="success-wrapper hidden">
-            <h2>{text.success.title}</h2>
+            <h3>{text.success.title}</h3>
             <p>{text.success.message}</p>
           </div>
         </div>

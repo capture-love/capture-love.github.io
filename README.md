@@ -1,24 +1,103 @@
 # <img src="./public/favicon.svg" alt="favicon" height="40" width="40" /> Capture Love
 
-Wedding photos & videos upload app
+A **zero cost** wedding/event photos & videos upload web app
 
-<img src=".github/docs/feature_graphic.png" alt="feature_graphic" height="800">
+By utilizing [GitHubs' free hosting](https://pages.github.com/) & [AWS free 1 year trial](https://aws.amazon.com/free/?all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc&awsf.Free%20Tier%20Types=tier%2312monthsfree&awsf.Free%20Tier%20Categories=categories%23storage) for the S3 service this application can run at zero cost for the special day.
+- the app has already been used at 3 weddings with great success!
+
+|   |   |   |
+| - | - | - |
+| <img src=".github/docs/screen_1.png" alt="screen_1" height="800"> | <img src=".github/docs/screen_2.png" alt="screen_2" height="800"> | <img src=".github/docs/screen_3.png" alt="screen_3" height="800"> |
 
 ---
 
 ## Deployment
 
 ### Setup GitHub pages
-ATM there is some known problems when deploying to GitHub pages using tags
-The current workaround for this can be found [here](https://github.com/actions/deploy-pages/issues/151#issuecomment-1491271099)
-
-#### The quick guide
 
 1. Go to project `Settings` > `Pages` > `Build and deployment`
     1. Set "**Source**" to "**GitHub Actions**"
 1. Go to project `Settings` > `Environments`
     1. If not already there, create an environment called `github-pages`
     2. Set "**Deployment branches**" to "**All branches**"
+
+### Setup the ENV variables & secrets
+1. Go to project `Settings` > `Secrets and variables` > `Actions`
+    1. `Secrets` > `Repository secrets` > Set the secrets for the following:
+        - `AWS_ACCOUNT_ID`
+        - `AWS_ACCESS_KEY_ID`
+        - `AWS_SECRET_ACCESS_KEY`
+        - `AWS_S3_REGION`
+        - `AWS_S3_BUCKET`
+    2. `Variables` > `Repository variables` > Set the variables for the following:
+        - `HEADER`
+        - `HEADER_DATE`
+        - `SITE_TITLE`
+
+### Setup AWS S3 bucket and IAM role
+
+1. Login to [AWS console](https://aws.amazon.com/console) as admin/root
+2. Find the `S3` service
+3. Create a bucket with name `capture-love` (make sure the region is the closest to you event location for best performance)
+4. Inside the bucket go to `Permissions`
+    1. Update the `Bucket Policy` to below
+        ```JSON
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Sid": "PublicListGet",
+                    "Effect": "Allow",
+                    "Principal": "*",
+                    "Action": [
+                        "s3:List*",
+                        "s3:Get*"
+                    ],
+                    "Resource": [
+                        "arn:aws:s3:::capture-love",
+                        "arn:aws:s3:::capture-love/*"
+                    ]
+                }
+            ]
+        }
+        ```
+    2. Update the `Cross-origin resource sharing (CORS)` to below
+        ```JSON
+        [
+            {
+                "AllowedHeaders": [
+                    "*"
+                ],
+                "AllowedMethods": [
+                    "GET",
+                    "PUT",
+                    "POST"
+                ],
+                "AllowedOrigins": [
+                    "https://example.com", // <- your GitHub pages URL goes here
+                ],
+                "ExposeHeaders": []
+            }
+        ]
+        ```
+5. Find the `IAM` service and create a new user with name `capture-love` (make sure to select the `Programmatic access` option & save the credentials)
+6. Add the following permissions policy to the user using the `Add permissions` > `Create inline policy` option:
+    ```JSON
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Sid": "PublicListGetPut",
+                "Effect": "Allow",
+                "Action": "s3:*",
+                "Resource": [
+                    "arn:aws:s3:::capture-love",
+                    "arn:aws:s3:::capture-love/*"
+                ]
+            }
+        ]
+    }
+    ```
 
 ### Deploy the app
 
@@ -50,37 +129,15 @@ git push origin --tags
 ---
 
 ## Development
-### Requirements
-#### Node.js & yarn
-
-Node version `>=20.9.0` and up needed to run the React scripts. And yarn to run the scripts and handle dependencies.
 
 ### Setup
 Run the following commands to setup the project
 
 ```sh
-cp .env.example .env
-yarn install
+cp .env.example .env.local
 ```
 
-### Commands
-
-Install node dependencies:
-```sh
-yarn (install)
-```
-
-Run dev server for development in the browser:
-```sh
-yarn dev
-```
-
-To build application for production:
-```sh
-yarn build
-```
-
-## Post event
+## Post wedding/event
 
 ### Download whole S3 bucket
 
