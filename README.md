@@ -5,10 +5,10 @@ A **zero cost** wedding/event photos & videos upload web app
 By utilizing [GitHubs' free hosting](https://pages.github.com/) & [AWS free 1 year trial](https://aws.amazon.com/free/?all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc&awsf.Free%20Tier%20Types=tier%2312monthsfree&awsf.Free%20Tier%20Categories=categories%23storage) for the S3 service this application can run at zero cost for the special day.
 - the app has already been used at 3 weddings with great success!
 
-|   |   |   |
-| - | - | - |
-| <img src=".github/docs/screen_1.png" alt="screen_1" height="800"> | <img src=".github/docs/screen_2.png" alt="screen_2" height="800"> | <img src=".github/docs/screen_3.png" alt="screen_3" height="800"> |
-
+| | | |
+|-|-|-|
+| ![screen_1](.github/docs/screen_1.png) | ![screen_2](.github/docs/screen_2.png) | ![screen_3](.github/docs/screen_3.png)
+| | | |
 ---
 
 ## Deployment
